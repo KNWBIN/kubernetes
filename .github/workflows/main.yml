@@ -18,11 +18,11 @@ jobs:
       id: go
       uses: actions/setup-go@v3
       with:
-        go-version: 1.16.15
+        go-version: 1.17.13
 
     - name: Dump GitHub context
       env:
-        packageName: v1.22.15
+        packageName: v1.23.12
       #run: echo "::set-env name=packageName::v1.18.2"
       #run: echo '${{ env.packageName }}'
       run: echo "packageName=${{ env.packageName }}" >> $GITHUB_ENV
@@ -31,7 +31,7 @@ jobs:
       run: echo '${{ env.packageName }}'
        
     - name: Check out code into the Go module directory
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         ref: ${{ env.packageName }}
 
