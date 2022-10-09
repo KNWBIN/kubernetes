@@ -18,16 +18,16 @@ jobs:
       id: go
       uses: actions/setup-go@v3
       with:
-        go-version: 1.17.13
+        go-version: 1.18.6
 
-    - name: Dump GitHub context
+    - name: SET GitHub ENV k8s version
       env:
-        packageName: v1.23.12
+        packageName: v1.24.6
       #run: echo "::set-env name=packageName::v1.18.2"
       #run: echo '${{ env.packageName }}'
       run: echo "packageName=${{ env.packageName }}" >> $GITHUB_ENV
     
-    - name: Get Env
+    - name: Get github Env
       run: echo '${{ env.packageName }}'
        
     - name: Check out code into the Go module directory
@@ -38,12 +38,12 @@ jobs:
 #    - name: 切换分支
 #      run: git checkout v1.20.9
     
-    - name: Sed Env
+    - name: modify cert time file
       run: |
         sed -i "s/365/365 * 99/" /home/runner/work/kubernetes/kubernetes/cmd/kubeadm/app/constants/constants.go
         sed -i "s/10)/99)/"  /home/runner/work/kubernetes/kubernetes/staging/src/k8s.io/client-go/util/cert/cert.go
 
-    - name: Get Env
+    - name: Get modify file
       run: |
         find . -name constants.go |xargs cat |grep 365
         find . -name cert.go |xargs cat |grep 365d
@@ -64,7 +64,7 @@ jobs:
     #- name: 切换分支
     #  run: git checkout v1.18.2
 
-    - name: Build
+    - name: Build kubeadm
       run: KUBE_GIT_TREE_STATE=clean make all WHAT=cmd/kubeadm GOFLAGS=-v
 
     - name: Get paGth
@@ -75,10 +75,10 @@ jobs:
         chmod +x ./_output/local/bin/linux/amd64/kubeadm
         ./_output/local/bin/linux/amd64/kubeadm version
 
-    - name: Package
+    - name: Package file dirname
       run: mkdir myki && cp ./_output/local/bin/linux/amd64/kubeadm myki
 
-    - uses: actions/upload-artifact@v1
+    - uses: actions/upload-artifact@v3
       with:
         name: kubeadm-${{ env.packageName }}
         path: myki
